@@ -74,15 +74,12 @@ def postgres_transaction(func):
             print(f"Error: {e}")
 
         finally:
-            cur.close()
+            pass
 
     return wrapper
 
 
-@postgres_transaction
-def generate_username():
-    cur.execute("SELECT username FROM students")
-    students = cur.fetchone()
+def generate_username(students):
     while True:
         username = 'st' + ''.join([str(random.randint(0, 9)) for _ in range(7)])
         if students is None:
@@ -107,9 +104,11 @@ class Student(BaseModel):
 @postgres_transaction
 @app.post("/register")
 async def register(student: Student):
+    cur.execute("SELECT username FROM students")
+    students = cur.fetchone()
     password = generate_password()
     hashed_password = pwd_context.hash(password)
-    username = generate_username()
+    username = generate_username(students)
     try:
         cur.execute(
             "INSERT INTO students (first_name, last_name, birth_date, country, address, school, email, password, mentor_id, username) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
