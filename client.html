@@ -1,0 +1,42 @@
+<html>
+
+<body>
+
+<button onclick="registerStudent()">Test</button>
+
+<script>
+
+    async function registerStudent() {
+  const data = {
+    first_name: "John",
+    last_name: "Doe",
+    birth_date: "1999-01-01",
+    country: "USA",
+    address: "123 Main St.",
+    school: "Example High School",
+    email: "sherman.peabody99@gmail.com"
+  };
+
+  try {
+    const response = await fetch("http://localhost:8001/register", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (response.ok) {
+      const jsonResponse = await response.json();
+      console.log(jsonResponse);
+    } else {
+      throw new Error("Failed to register student");
+    }
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+</script>
+</body>
+</html>
